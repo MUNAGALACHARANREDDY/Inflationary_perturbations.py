@@ -17,7 +17,9 @@ def calculate_XY(vacuum_prescription):
     if vacuum_prescription == "conventional":
         # Conventional vacuum prescription
         X = 0
-        Y = 1j * (1 - 2*p) * (1 - p)
+        # 'p' should be defined or imported appropriately
+        p = 0.1  # Example value for 'p'
+        Y = 1j * (1 - 2 * p) * (1 - p)
     elif vacuum_prescription == "adiabatic":
         # Adiabatic vacuum prescription (≥ 1st order)
         X = 0
@@ -46,15 +48,12 @@ vacuum_prescription = sys.argv[1]
 # Calculate X and Y based on the chosen vacuum prescription
 X, Y = calculate_XY(vacuum_prescription)
 
-# Rest of the script remains unchanged
-
-
 # Define the initial conditions for v_k and v_k'
 v_k0 = (1 / np.sqrt(k)) * (1 + X + Y) * theta0 / 2
 v_k0_prime = -1j * np.sqrt(k) * (1 + Y - X) * theta0 / 2
 
 # Mukhanov-Sasaki equation
-def ms_equation(eta, y, k, H):
+def ms_equation(eta, y):
     v_k, v_k_prime = y
     z_double_prime_over_z = 2 / eta**2  # Example for de Sitter space
     dvk_deta = v_k_prime
@@ -66,7 +65,6 @@ solution = solve_ivp(
     ms_equation,
     [eta0, eta_end],
     [v_k0, v_k0_prime],
-    args=(k, H),
     t_eval=np.linspace(eta0, eta_end, 1000),
     method='RK45'
 )
