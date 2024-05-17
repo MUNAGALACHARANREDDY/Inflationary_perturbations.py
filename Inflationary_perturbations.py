@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 
@@ -10,8 +11,43 @@ eta_end = -1e-2  # End of inflation (conformal time)
 theta0 = 1e-2  # Small parameter
 
 # Parameters for non-standard initial conditions
-X = 0.1  # Example value for X
-Y = 0.2  # Example value for Y
+
+
+def calculate_XY(vacuum_prescription):
+    if vacuum_prescription == "conventional":
+        # Conventional vacuum prescription
+        X = 0
+        Y = 1j * (1 - 2*p) * (1 - p)
+    elif vacuum_prescription == "adiabatic":
+        # Adiabatic vacuum prescription (≥ 1st order)
+        X = 0
+        Y = 0
+    elif vacuum_prescription == "hamiltonian_diagonalization":
+        # Hamiltonian diagonalization vacuum prescription
+        X = 0
+        Y = 0
+    elif vacuum_prescription == "danielsson":
+        # Danielsson vacuum prescription
+        X = -1j
+        Y = 1j
+    else:
+        print("Invalid vacuum prescription")
+        sys.exit(1)
+    return X, Y
+
+# Check if command-line arguments for vacuum prescription are provided
+if len(sys.argv) != 2:
+    print("Usage: python inflationary_perturbations.py <vacuum_prescription>")
+    sys.exit(1)
+
+# Parse command-line argument for vacuum prescription
+vacuum_prescription = sys.argv[1]
+
+# Calculate X and Y based on the chosen vacuum prescription
+X, Y = calculate_XY(vacuum_prescription)
+
+# Rest of the script remains unchanged
+
 
 # Define the initial conditions for v_k and v_k'
 v_k0 = (1 / np.sqrt(k)) * (1 + X + Y) * theta0 / 2
